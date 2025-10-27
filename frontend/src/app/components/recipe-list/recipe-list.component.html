@@ -1,0 +1,100 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="mb-8">
+    <h1 class="text-3xl md:text-4xl font-bold text-green-deep mb-4">Mes Recettes</h1>
+    
+    <div class="max-w-md">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (input)="filterRecipes()"
+        placeholder="Rechercher par titre ou ingrédient..."
+        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-deep focus:border-transparent shadow-sm">
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="flex justify-center items-center py-12">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-deep"></div>
+    </div>
+  }
+
+  @if (error) {
+    <div class="bg-red-50 text-red-600 px-6 py-4 rounded-xl shadow-md">
+      {{ error }}
+    </div>
+  }
+
+  @if (!loading && !error && filteredRecipes.length === 0 && searchTerm) {
+    <div class="text-center py-12">
+      <p class="text-gray-600 text-lg">Aucune recette trouvée pour "{{ searchTerm }}"</p>
+    </div>
+  }
+
+  @if (!loading && !error && filteredRecipes.length === 0 && !searchTerm) {
+    <div class="text-center py-12">
+      <p class="text-gray-600 text-lg mb-4">Aucune recette disponible</p>
+      @if (accessCodeService.isAuthenticated()) {
+        <a 
+          routerLink="/add" 
+          class="inline-block bg-green-deep text-white px-6 py-3 rounded-xl hover:bg-green-dark transition-colors shadow-md">
+          Ajouter votre première recette
+        </a>
+      }
+    </div>
+  }
+
+  @if (!loading && !error && filteredRecipes.length > 0) {
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      @for (recipe of filteredRecipes; track recipe.id) {
+        <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow overflow-hidden cursor-pointer"
+             [routerLink]="['/recipe', recipe.id]">
+          <div class="h-48 bg-gray-200 overflow-hidden">
+            @if (recipe.imageUrl) {
+              <img 
+                [src]="recipe.imageUrl" 
+                [alt]="recipe.title"
+                class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+            } @else {
+              <div class="w-full h-full flex items-center justify-center text-6xl">
+                🍽️
+              </div>
+            }
+          </div>
+          
+          <div class="p-5">
+            <h3 class="text-xl font-bold text-green-deep mb-2 line-clamp-2">{{ recipe.title }}</h3>
+            
+            @if (recipe.duration) {
+              <div class="flex items-center text-gray-600 mb-4">
+                <span class="mr-2">⏱️</span>
+                <span>{{ recipe.duration }} min</span>
+              </div>
+            }
+            
+            <div class="flex space-x-2">
+              <a 
+                [routerLink]="['/recipe', recipe.id]"
+                class="flex-1 bg-green-deep text-white text-center px-4 py-2 rounded-lg hover:bg-green-dark transition-colors">
+                Voir
+              </a>
+              
+              @if (accessCodeService.isAuthenticated()) {
+                <a 
+                  [routerLink]="['/edit', recipe.id]"
+                  (click)="$event.stopPropagation()"
+                  class="flex-1 bg-gray-green text-white text-center px-4 py-2 rounded-lg hover:bg-gray-dark transition-colors">
+                  Modifier
+                </a>
+                <button 
+                  (click)="deleteRecipe(recipe.id, $event)"
+                  class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors">
+                  🗑️
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
