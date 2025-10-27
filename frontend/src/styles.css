@@ -1,11 +1,6 @@
-@import "tailwindcss";
-
-@theme {
-  --color-green-deep: #127369;
-  --color-green-dark: #10403B;
-  --color-gray-green: #8AA6A3;
-  --color-gray-dark: #4C5958;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 * {
   margin: 0;
