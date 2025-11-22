@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: '/api',
+  apiUrl: 'https://recettes-api.onrender.com/api',
   accessCode: 'MY_SECRET_CODE'
 };
