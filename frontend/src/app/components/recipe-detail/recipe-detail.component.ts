@@ -69,6 +69,15 @@ export class RecipeDetailComponent implements OnInit {
     }
   }
 
+  getImageUrl(url: string): string {
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    // For local images, prepend the backend base URL (without /api)
+    const baseUrl = this.recipeService['apiUrl'].replace('/api/recipes', '');
+    return `${baseUrl}${url}`;
+  }
+
   goBack(): void {
     this.router.navigate(['/']);
   }

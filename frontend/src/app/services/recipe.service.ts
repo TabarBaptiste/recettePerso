@@ -40,7 +40,7 @@ export class RecipeService {
     return this.http.get<Recipe>(`${this.apiUrl}/${id}`);
   }
 
-  createRecipe(recipe: Recipe): Observable<Recipe> {
+  createRecipe(recipe: Recipe | FormData): Observable<Recipe> {
     return this.http.post<Recipe>(this.apiUrl, recipe).pipe(
       tap(newRecipe => {
         if (this.recipesCache) {
@@ -50,7 +50,7 @@ export class RecipeService {
     );
   }
 
-  updateRecipe(id: number, recipe: Recipe): Observable<Recipe> {
+  updateRecipe(id: number, recipe: Recipe | FormData): Observable<Recipe> {
     return this.http.put<Recipe>(`${this.apiUrl}/${id}`, recipe).pipe(
       tap(updatedRecipe => {
         if (this.recipesCache) {

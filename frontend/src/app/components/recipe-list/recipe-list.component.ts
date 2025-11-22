@@ -55,6 +55,15 @@ export class RecipeListComponent implements OnInit {
     );
   }
 
+  getImageUrl(url: string): string {
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    // For local images, prepend the backend base URL (without /api)
+    const baseUrl = this.recipeService['apiUrl'].replace('/api/recipes', '');
+    return `${baseUrl}${url}`;
+  }
+
   deleteRecipe(id: number | undefined, event: Event): void {
     event.stopPropagation();
     

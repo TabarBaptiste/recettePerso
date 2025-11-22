@@ -38,4 +38,8 @@ coverage/
 migrations/
 !prisma/migrations/.gitkeep
 
+# Uploaded files
+backend/uploads/images/*
+!backend/uploads/images/.gitkeep
+
 .claude
