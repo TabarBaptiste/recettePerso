@@ -82,8 +82,11 @@ export class RecipeService {
     if (url.startsWith('http://') || url.startsWith('https://')) {
       return url;
     }
-    // For local images, prepend the backend base URL (without /api/recipes)
-    const baseUrl = environment.apiUrl.replace('/api', '');
+    // For local images, construct the full URL from environment apiUrl
+    // environment.apiUrl is like 'http://localhost:3000/api'
+    // We need to get just 'http://localhost:3000' and append the image path
+    const urlObj = new URL(environment.apiUrl, window.location.origin);
+    const baseUrl = `${urlObj.protocol}//${urlObj.host}`;
     return `${baseUrl}${url}`;
   }
 }

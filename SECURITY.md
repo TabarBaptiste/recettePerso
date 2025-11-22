@@ -49,8 +49,26 @@ router.post('/', uploadLimiter, upload.single('image'), async (req, res) => {
   - Persistence in serverless/container environments
 
 ### Input Validation
-- Current validation checks file type and size on upload
-- **Recommendation**: Add additional validation for:
-  - Image content validation (actual image data, not just extension)
-  - Virus/malware scanning in production environments
-  - Content moderation if the app becomes multi-user
+**Current Implementation**:
+- File type validation based on MIME type and extension
+- File size limit (5MB)
+
+**Issue**: The current file validation relies on client-provided MIME type and file extension, which can be easily spoofed. A malicious user could upload a non-image file by manipulating the file extension and MIME type.
+
+**Recommendations**:
+1. **Server-side content validation**: Use image processing libraries (like `sharp` or `jimp`) to verify uploaded files are actual valid images:
+   ```typescript
+   import sharp from 'sharp';
+   
+   // In the route handler, after multer processes the file:
+   try {
+     await sharp(req.file.path).metadata();
+     // If this doesn't throw, the file is a valid image
+   } catch (error) {
+     // Not a valid image, delete and reject
+     fs.unlinkSync(req.file.path);
+     return res.status(400).json({ error: 'Invalid image file' });
+   }
+   ```
+2. **Virus/malware scanning** in production environments
+3. **Content moderation** if the app becomes multi-user
