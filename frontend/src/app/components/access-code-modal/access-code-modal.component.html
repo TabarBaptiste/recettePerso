@@ -1,51 +1,50 @@
-<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-  <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 md:p-8">
-    <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-bold text-green-deep">Code d'accès</h2>
-      <button 
+<div class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+  <div class="bg-dark-800 rounded-xl border border-dark-600 max-w-sm w-full p-5">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-bold text-white">Code d'accès</h2>
+      <button
         (click)="closeModal()"
-        class="text-gray-dark hover:text-gray-700 text-2xl"
+        class="p-1 text-gray-400 hover:text-white transition-colors rounded"
         aria-label="Fermer">
-        ×
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
       </button>
     </div>
-    
-    <p class="text-gray-600 mb-6">
-      Entrez le code d'accès pour débloquer les fonctions d'édition.
+
+    <p class="text-gray-400 text-sm mb-4">
+      Entrez le code pour débloquer l'édition.
     </p>
-    
+
     <form (ngSubmit)="submitCode()" class="space-y-4">
       <div>
-        <label for="access-code" class="block text-sm font-medium text-gray-700 mb-2">
-          Code d'accès
-        </label>
         <input
           type="password"
           id="access-code"
           [(ngModel)]="code"
           name="code"
-          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-deep focus:border-transparent"
-          placeholder="Entrez le code"
+          class="w-full px-3 py-2.5 bg-dark-700 border border-dark-600 rounded-lg text-gray-300 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+          placeholder="Code d'accès"
           required
           autocomplete="off">
       </div>
-      
+
       @if (error) {
-        <div class="bg-red-50 text-red-600 px-4 py-3 rounded-lg text-sm">
+        <div class="bg-red-500/10 border border-red-500/20 text-red-400 px-3 py-2 rounded-lg text-sm">
           {{ error }}
         </div>
       }
-      
+
       <div class="flex space-x-3">
         <button
           type="button"
           (click)="closeModal()"
-          class="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+          class="flex-1 px-4 py-2 bg-dark-600 text-gray-300 rounded-lg hover:bg-dark-500 transition-colors text-sm">
           Annuler
         </button>
         <button
           type="submit"
-          class="flex-1 px-4 py-2 bg-green-deep text-white rounded-lg hover:bg-green-dark transition-colors">
+          class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm">
           Valider
         </button>
       </div>

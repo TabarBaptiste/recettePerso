@@ -1,36 +1,51 @@
-<header class="bg-green-deep shadow-md">
-  <div class="container mx-auto px-4 py-4">
+<header class="bg-dark-800 border-b border-dark-600">
+  <div class="container mx-auto px-4 py-3">
     <div class="flex items-center justify-between">
-      <div class="flex items-center space-x-4">
-        <h1 class="text-2xl font-bold text-white">🧑‍🍳 Mes Recettes</h1>
-      </div>
-      
-      <nav class="flex items-center space-x-4">
-        <a 
-          routerLink="/" 
-          class="text-white hover:text-gray-green transition-colors px-3 py-2 rounded-lg"
-          routerLinkActive="bg-green-dark"
-          [routerLinkActiveOptions]="{exact: true}">
-          Accueil
+      <a routerLink="/" class="flex items-center space-x-2">
+        <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+        </svg>
+        <span class="text-xl font-bold text-white hidden sm:block">Mes Recettes</span>
+      </a>
+
+      <nav class="flex items-center space-x-2">
+        <a
+          routerLink="/"
+          class="p-2 text-gray-400 hover:text-blue-500 transition-colors rounded-lg hover:bg-dark-700"
+          routerLinkActive="text-blue-500 bg-dark-700"
+          [routerLinkActiveOptions]="{exact: true}"
+          title="Accueil">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+          </svg>
         </a>
-        
+
         @if (accessCodeService.isAuthenticated()) {
-          <a 
-            routerLink="/add" 
-            class="text-white hover:text-gray-green transition-colors px-3 py-2 rounded-lg"
-            routerLinkActive="bg-green-dark">
-            Ajouter
+          <a
+            routerLink="/add"
+            class="p-2 text-gray-400 hover:text-blue-500 transition-colors rounded-lg hover:bg-dark-700"
+            routerLinkActive="text-blue-500 bg-dark-700"
+            title="Ajouter">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
           </a>
-          <button 
+          <button
             (click)="logout()"
-            class="bg-gray-dark text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors">
-            Déconnexion
+            class="p-2 text-gray-400 hover:text-red-500 transition-colors rounded-lg hover:bg-dark-700"
+            title="Déconnexion">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+            </svg>
           </button>
         } @else {
-          <button 
+          <button
             (click)="openCodeModal()"
-            class="bg-white text-green-deep px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors font-semibold">
-            Se connecter
+            class="p-2 text-gray-400 hover:text-blue-500 transition-colors rounded-lg hover:bg-dark-700"
+            title="Se connecter">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+            </svg>
           </button>
         }
       </nav>
@@ -39,7 +54,7 @@
 </header>
 
 @if (showCodeModal) {
-  <app-access-code-modal 
+  <app-access-code-modal
     (close)="closeCodeModal()"
     (codeSubmitted)="onCodeSubmitted()">
   </app-access-code-modal>
