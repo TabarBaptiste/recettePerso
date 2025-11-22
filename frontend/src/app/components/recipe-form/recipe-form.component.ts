@@ -29,6 +29,7 @@ export class RecipeFormComponent implements OnInit {
   selectedFile: File | null = null;
   imagePreview: string | null = null;
   removeExistingImage = false;
+  fileInputValue = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -99,10 +100,7 @@ export class RecipeFormComponent implements OnInit {
   clearImageSelection(): void {
     this.selectedFile = null;
     this.imagePreview = null;
-    const input = document.getElementById('image') as HTMLInputElement;
-    if (input) {
-      input.value = '';
-    }
+    this.fileInputValue = '';
   }
 
   removeImage(): void {
@@ -111,12 +109,7 @@ export class RecipeFormComponent implements OnInit {
   }
 
   getImageUrl(url: string): string {
-    if (url.startsWith('http://') || url.startsWith('https://')) {
-      return url;
-    }
-    // For local images, prepend the backend base URL (without /api)
-    const baseUrl = this.recipeService['apiUrl'].replace('/api/recipes', '');
-    return `${baseUrl}${url}`;
+    return this.recipeService.getImageUrl(url);
   }
 
   onSubmit(): void {

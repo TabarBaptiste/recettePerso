@@ -77,4 +77,13 @@ export class RecipeService {
     this.recipesCache = null;
     this.cacheTimestamp = 0;
   }
+
+  getImageUrl(url: string): string {
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    // For local images, prepend the backend base URL (without /api/recipes)
+    const baseUrl = environment.apiUrl.replace('/api', '');
+    return `${baseUrl}${url}`;
+  }
 }
