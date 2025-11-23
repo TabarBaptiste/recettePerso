@@ -2,23 +2,20 @@ import { Router } from 'express';
 import { PrismaClient } from '@prisma/client';
 import multer from 'multer';
 import path from 'path';
-import fs from 'fs';
+import { v2 as cloudinary } from 'cloudinary';
 
 const router = Router();
 const prisma = new PrismaClient();
 
-// Configure multer for image uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadPath = path.join(__dirname, '../../uploads/images');
-    fs.mkdirSync(uploadPath, { recursive: true });
-    cb(null, uploadPath);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
-  }
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
 });
+
+// Configure multer for image uploads (store in memory for Cloudinary upload)
+const storage = multer.memoryStorage();
 
 const upload = multer({
   storage: storage,
@@ -37,6 +34,36 @@ const upload = multer({
     }
   }
 });
+
+// Helper function to upload image to Cloudinary
+async function uploadToCloudinary(file: Express.Multer.File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder: 'recipes',
+        resource_type: 'auto'
+      },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result!.secure_url);
+      }
+    );
+    uploadStream.end(file.buffer);
+  });
+}
+
+// Helper function to delete image from Cloudinary
+async function deleteFromCloudinary(imageUrl: string): Promise<void> {
+  try {
+    // Extract public_id from Cloudinary URL
+    const urlParts = imageUrl.split('/');
+    const fileWithExt = urlParts[urlParts.length - 1];
+    const publicId = 'recipes/' + fileWithExt.split('.')[0];
+    await cloudinary.uploader.destroy(publicId);
+  } catch (error) {
+    console.error('Error deleting from Cloudinary:', error);
+  }
+}
 
 // GET /api/recipes - Get all recipes
 router.get('/', async (req, res) => {
@@ -81,10 +108,10 @@ router.post('/', upload.single('image'), async (req, res) => {
       return res.status(400).json({ error: 'Title, ingredients, and steps are required' });
     }
     
-    // If an image was uploaded, store its path
+    // If an image was uploaded, upload it to Cloudinary
     let imageUrl = undefined;
     if (req.file) {
-      imageUrl = `/uploads/images/${req.file.filename}`;
+      imageUrl = await uploadToCloudinary(req.file);
     }
     
     const recipe = await prisma.recipe.create({
@@ -119,22 +146,16 @@ router.put('/:id', upload.single('image'), async (req, res) => {
     
     // If a new image was uploaded, use it and delete the old one
     if (req.file) {
-      imageUrl = `/uploads/images/${req.file.filename}`;
+      imageUrl = await uploadToCloudinary(req.file);
       
-      // Delete old image if it exists and is a local file
-      if (existingRecipe?.imageUrl && existingRecipe.imageUrl.startsWith('/uploads/')) {
-        const oldImagePath = path.join(__dirname, '../..', existingRecipe.imageUrl);
-        if (fs.existsSync(oldImagePath)) {
-          fs.unlinkSync(oldImagePath);
-        }
+      // Delete old image from Cloudinary if it exists
+      if (existingRecipe?.imageUrl && existingRecipe.imageUrl.includes('cloudinary.com')) {
+        await deleteFromCloudinary(existingRecipe.imageUrl);
       }
     } else if (keepExistingImage === 'false') {
       // User wants to remove the image
-      if (existingRecipe?.imageUrl && existingRecipe.imageUrl.startsWith('/uploads/')) {
-        const oldImagePath = path.join(__dirname, '../..', existingRecipe.imageUrl);
-        if (fs.existsSync(oldImagePath)) {
-          fs.unlinkSync(oldImagePath);
-        }
+      if (existingRecipe?.imageUrl && existingRecipe.imageUrl.includes('cloudinary.com')) {
+        await deleteFromCloudinary(existingRecipe.imageUrl);
       }
       imageUrl = null;
     }
@@ -172,12 +193,9 @@ router.delete('/:id', async (req, res) => {
       where: { id: parseInt(id) }
     });
     
-    // Delete associated image file if it exists and is local
-    if (recipe?.imageUrl && recipe.imageUrl.startsWith('/uploads/')) {
-      const imagePath = path.join(__dirname, '../..', recipe.imageUrl);
-      if (fs.existsSync(imagePath)) {
-        fs.unlinkSync(imagePath);
-      }
+    // Delete associated image from Cloudinary if it exists
+    if (recipe?.imageUrl && recipe.imageUrl.includes('cloudinary.com')) {
+      await deleteFromCloudinary(recipe.imageUrl);
     }
     
     res.status(204).send();

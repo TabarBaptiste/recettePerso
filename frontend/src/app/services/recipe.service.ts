@@ -79,12 +79,11 @@ export class RecipeService {
   }
 
   getImageUrl(url: string): string {
+    // Cloudinary URLs are already complete, return as-is
     if (url.startsWith('http://') || url.startsWith('https://')) {
       return url;
     }
-    // For local images, construct the full URL from environment apiUrl
-    // environment.apiUrl is like 'http://localhost:3000/api'
-    // We need to get just 'http://localhost:3000' and append the image path
+    // Legacy: for old local images (if any remain in DB)
     const urlObj = new URL(environment.apiUrl, window.location.origin);
     const baseUrl = `${urlObj.protocol}//${urlObj.host}`;
     return `${baseUrl}${url}`;
