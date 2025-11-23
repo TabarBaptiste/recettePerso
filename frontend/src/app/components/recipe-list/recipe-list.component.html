@@ -61,7 +61,7 @@
           <div class="aspect-square bg-dark-700 overflow-hidden">
             @if (recipe.imageUrl) {
               <img
-                [src]="recipe.imageUrl"
+                [src]="getImageUrl(recipe.imageUrl)"
                 [alt]="recipe.title"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
             } @else {

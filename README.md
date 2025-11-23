@@ -7,6 +7,7 @@ Une application web moderne et mobile-first pour gérer vos recettes maison : aj
 - ✅ Liste des recettes avec recherche par titre ou ingrédient
 - ✅ Affichage détaillé d'une recette (ingrédients, étapes, image, durée)
 - ✅ Ajout et modification de recettes
+- ✅ **Upload d'images** - Téléchargez vos propres images pour les recettes (JPG, PNG, GIF, WebP, 5MB max)
 - ✅ Suppression de recettes
 - ✅ Protection par code d'accès (frontend uniquement)
 - ✅ Design responsive mobile-first
@@ -209,12 +210,22 @@ interface Recipe {
   title: string;
   ingredients: string;
   steps: string;
-  imageUrl?: string;
+  imageUrl?: string;  // URL externe ou chemin local (ex: /uploads/images/123456.jpg)
   duration?: number;  // en minutes
   createdAt: Date;
   updatedAt: Date;
 }
 ```
+
+## 📸 Gestion des images
+
+L'application permet désormais de télécharger des images personnalisées pour chaque recette :
+
+- **Formats supportés** : JPG, JPEG, PNG, GIF, WebP
+- **Taille maximale** : 5 MB
+- **Stockage** : Les images sont stockées localement dans `backend/uploads/images/`
+- **Suppression automatique** : Les images sont automatiquement supprimées lors de la suppression ou du remplacement de la recette
+- **Compatibilité** : Le système supporte toujours les URLs d'images externes
 
 ## 🤝 Contribution
 

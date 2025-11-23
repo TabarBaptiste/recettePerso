@@ -49,7 +49,7 @@
         @if (recipe.imageUrl) {
           <div class="aspect-video overflow-hidden">
             <img
-              [src]="recipe.imageUrl"
+              [src]="getImageUrl(recipe.imageUrl)"
               [alt]="recipe.title"
               class="w-full h-full object-cover">
           </div>

@@ -55,6 +55,10 @@ export class RecipeListComponent implements OnInit {
     );
   }
 
+  getImageUrl(url: string): string {
+    return this.recipeService.getImageUrl(url);
+  }
+
   deleteRecipe(id: number | undefined, event: Event): void {
     event.stopPropagation();
     

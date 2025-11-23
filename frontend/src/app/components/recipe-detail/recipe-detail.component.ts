@@ -69,6 +69,10 @@ export class RecipeDetailComponent implements OnInit {
     }
   }
 
+  getImageUrl(url: string): string {
+    return this.recipeService.getImageUrl(url);
+  }
+
   goBack(): void {
     this.router.navigate(['/']);
   }

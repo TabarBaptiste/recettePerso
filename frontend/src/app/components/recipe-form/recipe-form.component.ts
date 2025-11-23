@@ -26,6 +26,10 @@ export class RecipeFormComponent implements OnInit {
   recipeId?: number;
   loading = false;
   error = '';
+  selectedFile: File | null = null;
+  imagePreview: string | null = null;
+  removeExistingImage = false;
+  fileInputValue = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -64,6 +68,50 @@ export class RecipeFormComponent implements OnInit {
     });
   }
 
+  onImageSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      
+      // Validate file size (5MB max)
+      if (file.size > 5 * 1024 * 1024) {
+        this.error = 'L\'image ne doit pas dépasser 5MB';
+        return;
+      }
+      
+      // Validate file type
+      if (!file.type.match(/^image\/(jpeg|jpg|png|gif|webp)$/)) {
+        this.error = 'Format d\'image non supporté. Utilisez JPG, PNG, GIF ou WebP';
+        return;
+      }
+      
+      this.selectedFile = file;
+      this.error = '';
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.imagePreview = e.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  clearImageSelection(): void {
+    this.selectedFile = null;
+    this.imagePreview = null;
+    this.fileInputValue = '';
+  }
+
+  removeImage(): void {
+    this.removeExistingImage = true;
+    this.recipe.imageUrl = '';
+  }
+
+  getImageUrl(url: string): string {
+    return this.recipeService.getImageUrl(url);
+  }
+
   onSubmit(): void {
     if (!this.accessCodeService.isAuthenticated()) {
       alert('Vous devez être connecté pour effectuer cette action');
@@ -78,14 +126,26 @@ export class RecipeFormComponent implements OnInit {
     this.loading = true;
     this.error = '';
 
-    const recipeData = {
-      ...this.recipe,
-      duration: this.recipe.duration || undefined
-    };
+    const formData = new FormData();
+    formData.append('title', this.recipe.title);
+    formData.append('ingredients', this.recipe.ingredients);
+    formData.append('steps', this.recipe.steps);
+    
+    if (this.recipe.duration) {
+      formData.append('duration', this.recipe.duration.toString());
+    }
+    
+    if (this.selectedFile) {
+      formData.append('image', this.selectedFile);
+    }
+    
+    if (this.removeExistingImage) {
+      formData.append('keepExistingImage', 'false');
+    }
 
     const operation = this.isEditMode && this.recipeId
-      ? this.recipeService.updateRecipe(this.recipeId, recipeData)
-      : this.recipeService.createRecipe(recipeData);
+      ? this.recipeService.updateRecipe(this.recipeId, formData)
+      : this.recipeService.createRecipe(formData);
 
     operation.subscribe({
       next: (recipe) => {
