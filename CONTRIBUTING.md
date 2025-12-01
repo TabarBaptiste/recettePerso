@@ -6,7 +6,7 @@ Merci de votre intérêt pour contribuer à l'application de gestion de recettes
 
 ### Prérequis
 
-- Node.js 18+ et npm
+- Node.js 22+ et npm
 - PostgreSQL (local ou Neon)
 - Git
 

@@ -68,6 +68,20 @@
           }
 
           <div class="space-y-6">
+            @if (recipe.utensils) {
+              <div>
+                <h2 class="flex items-center text-lg font-semibold text-blue-500 mb-3">
+                  <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                  </svg>
+                  Ustensiles
+                </h2>
+                <div class="bg-dark-700 rounded-lg p-4">
+                  <p class="whitespace-pre-wrap text-gray-300 text-sm">{{ formatListWithDashes(recipe.utensils) }}</p>
+                </div>
+              </div>
+            }
+
             <div>
               <h2 class="flex items-center text-lg font-semibold text-blue-500 mb-3">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -76,9 +90,10 @@
                 Ingrédients
               </h2>
               <div class="bg-dark-700 rounded-lg p-4">
-                <p class="whitespace-pre-wrap text-gray-300 text-sm">{{ recipe.ingredients }}</p>
+                <p class="whitespace-pre-wrap text-gray-300 text-sm">{{ formatListWithDashes(recipe.ingredients) }}</p>
               </div>
             </div>
+
 
             <div>
               <h2 class="flex items-center text-lg font-semibold text-blue-500 mb-3">
@@ -88,7 +103,7 @@
                 Préparation
               </h2>
               <div class="bg-dark-700 rounded-lg p-4">
-                <p class="whitespace-pre-wrap text-gray-300 text-sm">{{ recipe.steps }}</p>
+                <p class="whitespace-pre-wrap text-gray-300 text-sm">{{ formatStepsWithNumbers(recipe.steps) }}</p>
               </div>
             </div>
           </div>

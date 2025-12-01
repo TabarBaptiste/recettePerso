@@ -73,6 +73,57 @@ export class RecipeDetailComponent implements OnInit {
     return this.recipeService.getImageUrl(url);
   }
 
+  formatListWithDashes(text: string): string {
+    if (!text) return '';
+    
+    const lines = text.split(/\r?\n/);
+    const formattedLines = lines.map(line => {
+      const trimmed = line.trim();
+      
+      // Si la ligne est vide, la garder telle quelle
+      if (!trimmed) return line;
+      
+      // Si la ligne se termine par ":" (comme "Farce :"), ne pas ajouter de tiret
+      if (trimmed.endsWith(':')) return line;
+      
+      // Si la ligne commence déjà par un tiret, la garder telle quelle
+      if (trimmed.startsWith('-')) return line;
+      
+      // Déterminer l'indentation de la ligne originale
+      const indent = line.match(/^\s*/)?.[0] || '';
+      
+      // Ajouter un tiret au début
+      return `${indent}- ${trimmed}`;
+    });
+    
+    return formattedLines.join('\n');
+  }
+
+  formatStepsWithNumbers(text: string): string {
+    if (!text) return '';
+    
+    // Séparer en paragraphes (lignes séparées par des lignes vides)
+    const paragraphs = text.split(/\n\s*\n/);
+    
+    let stepNumber = 1;
+    const formattedParagraphs = paragraphs.map(paragraph => {
+      const trimmed = paragraph.trim();
+      
+      // Si le paragraphe est vide, le garder tel quel
+      if (!trimmed) return paragraph;
+      
+      // Si le paragraphe commence déjà par un nombre suivi d'un point, le garder tel quel
+      if (/^\d+\./.test(trimmed)) return paragraph;
+      
+      // Ajouter le numéro d'étape
+      const formatted = `${stepNumber}. ${trimmed}`;
+      stepNumber++;
+      return formatted;
+    });
+    
+    return formattedParagraphs.join('\n\n');
+  }
+
   goBack(): void {
     this.router.navigate(['/']);
   }
