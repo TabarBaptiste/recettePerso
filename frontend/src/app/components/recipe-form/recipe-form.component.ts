@@ -18,6 +18,7 @@ export class RecipeFormComponent implements OnInit {
     title: '',
     ingredients: '',
     steps: '',
+    utensils: '',
     imageUrl: '',
     duration: undefined
   };
@@ -130,6 +131,10 @@ export class RecipeFormComponent implements OnInit {
     formData.append('title', this.recipe.title);
     formData.append('ingredients', this.recipe.ingredients);
     formData.append('steps', this.recipe.steps);
+    
+    if (this.recipe.utensils) {
+      formData.append('utensils', this.recipe.utensils);
+    }
     
     if (this.recipe.duration) {
       formData.append('duration', this.recipe.duration.toString());

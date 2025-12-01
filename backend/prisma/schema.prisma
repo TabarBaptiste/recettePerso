@@ -15,6 +15,7 @@ model Recipe {
   title       String
   ingredients String
   steps       String
+  utensils    String?
   imageUrl    String?
   duration    Int?
   createdAt   DateTime @default(now())

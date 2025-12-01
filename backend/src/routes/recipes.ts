@@ -102,7 +102,7 @@ router.get('/:id', async (req, res) => {
 // POST /api/recipes - Create a new recipe
 router.post('/', upload.single('image'), async (req, res) => {
   try {
-    const { title, ingredients, steps, duration } = req.body;
+    const { title, ingredients, steps, utensils, duration } = req.body;
     
     if (!title || !ingredients || !steps) {
       return res.status(400).json({ error: 'Title, ingredients, and steps are required' });
@@ -119,6 +119,7 @@ router.post('/', upload.single('image'), async (req, res) => {
         title,
         ingredients,
         steps,
+        utensils: utensils || null,
         imageUrl,
         duration: duration ? parseInt(duration) : null
       }
@@ -135,7 +136,7 @@ router.post('/', upload.single('image'), async (req, res) => {
 router.put('/:id', upload.single('image'), async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, ingredients, steps, duration, keepExistingImage } = req.body;
+    const { title, ingredients, steps, utensils, duration, keepExistingImage } = req.body;
     
     // Get the existing recipe to potentially delete old image
     const existingRecipe = await prisma.recipe.findUnique({
@@ -166,6 +167,7 @@ router.put('/:id', upload.single('image'), async (req, res) => {
         title,
         ingredients,
         steps,
+        utensils: utensils || null,
         imageUrl,
         duration: duration ? parseInt(duration) : null
       }
