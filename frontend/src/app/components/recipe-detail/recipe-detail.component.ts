@@ -102,26 +102,55 @@ export class RecipeDetailComponent implements OnInit {
   formatStepsWithNumbers(text: string): string {
     if (!text) return '';
     
-    // Séparer en paragraphes (lignes séparées par des lignes vides)
-    const paragraphs = text.split(/\n\s*\n/);
+    // Séparer en lignes
+    const lines = text.split(/\r?\n/);
+    const formattedLines: string[] = [];
     
     let stepNumber = 1;
-    const formattedParagraphs = paragraphs.map(paragraph => {
-      const trimmed = paragraph.trim();
+    let isAfterColon = false;
+    
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const trimmed = line.trim();
       
-      // Si le paragraphe est vide, le garder tel quel
-      if (!trimmed) return paragraph;
+      // Si la ligne est vide, réinitialiser le contexte "après deux-points" et ajouter un espacement
+      if (!trimmed) {
+        isAfterColon = false;
+        formattedLines.push('');
+        continue;
+      }
       
-      // Si le paragraphe commence déjà par un nombre suivi d'un point, le garder tel quel
-      if (/^\d+\./.test(trimmed)) return paragraph;
+      // Si la ligne se termine par ":", c'est un titre de section
+      if (trimmed.endsWith(':')) {
+        isAfterColon = true;
+        // Numéroter la ligne de titre
+        if (!/^\d+\./.test(trimmed)) {
+          formattedLines.push(`${stepNumber}. ${trimmed}`);
+          stepNumber++;
+        } else {
+          formattedLines.push(trimmed);
+        }
+        continue;
+      }
+      
+      // Si on est après une ligne avec ":", ajouter une tabulation
+      if (isAfterColon) {
+        formattedLines.push(`    ${trimmed}`);
+        continue;
+      }
+      
+      // Si la ligne commence déjà par un nombre suivi d'un point, la garder telle quelle
+      if (/^\d+\./.test(trimmed)) {
+        formattedLines.push(trimmed);
+        continue;
+      }
       
       // Ajouter le numéro d'étape
-      const formatted = `${stepNumber}. ${trimmed}`;
+      formattedLines.push(`${stepNumber}. ${trimmed}`);
       stepNumber++;
-      return formatted;
-    });
+    }
     
-    return formattedParagraphs.join('\n\n');
+    return formattedLines.join('\n');
   }
 
   goBack(): void {
